@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Sign In</h1>
+  <!--the <form> element is used as a container for the form.
+    The action attribute is used to tell the browser the URL that should be used when submitting the form. When it is set to an empty string, the form is submitted to the URL that is currently in the address bar, which is the URL that rendered the form on the page.
+
+    The novalidate attribute attribute tells the browser not to apply validation, which leaves the task to the flask application. It is optional , but good for testing our server-side validation.
+  -->
+  <form action="" method="post" novalidate>
+    <!-- the form.hidden_tag() template argument generates a hidden field that includes a token used to protect against CSRF attacks. 
+    -->
+    {{ form.hidden_tag() }}
+    <p>
+      {{ form.username.label }}<br>
+      {{ form.username(size=32) }}
+      <!-- the below renders any validation errors-->
+      {% for error in form.username.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    <p>
+      {{ form.password.label }}<br>
+      {{ form.password(size=32) }}
+      {% for error in form.password.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+    <p>{{ form.submit() }}</p>
+  </form>
+{% endblock %}
