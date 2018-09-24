@@ -1,9 +1,11 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from app import db
+from flask_login import UserMixin  # generic implementations for the user model
+from app import login  # from flask-login to be used for user loader function
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
@@ -35,3 +37,10 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+
+# user loader function to help flask-login load a user from the db
+# flask-login passes the id as a string so it needs to be converted for the db
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))

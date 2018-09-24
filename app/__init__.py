@@ -2,11 +2,14 @@ from flask import Flask  # imports Flask object from flask package
 from config import Config  # imports Config class from config.py
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_login import LoginManager
 
 app = Flask(__name__)  # creates app object as instance of class Flask
 app.config.from_object(Config)
 db = SQLAlchemy(app)  # instantiate db by passing the app to SQLAlchemy
 migrate = Migrate(app, db)  # also instantiate the database migration engine
+login = LoginManager(app)  # instantiates flask-login
+login.login_view = 'login'  # this tells flask-login which view function handles logins
 
 # this app package is defined by the app directory and the __init__.py script
 # imported below app instantiation to avoid circular imports

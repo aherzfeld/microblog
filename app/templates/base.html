@@ -13,7 +13,12 @@
       <!-- this uses the url_for() function imported from flask
         to generate the URL by mapping it to its view function-->
       <a href="{{ url_for('index') }}">Home</a>
+      <!-- this conditional logic will change the login link to logout once a user is logged in, .is_anonymous is true for users who aren't logged in -->
+      {% if current_user.is_anonymous %}
       <a href="{{ url_for('login') }}">Login</a>
+      {% else %}
+      <a href="{{ url_for('logout') }}">Logout</a>
+      {% endif %}
     </div>
     <hr>
     {% with messages = get_flashed_messages() %}
