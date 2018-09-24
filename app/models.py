@@ -1,3 +1,4 @@
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from app import db
 
@@ -11,6 +12,12 @@ class User(db.Model):
     # the first argument to db.relationship is the model class that represents the "many" side of the relationship - in this case 'Post'
     # the backref argument defines the name of a field that will be added to the objects of the "many" class that points back at the "one" object.
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
