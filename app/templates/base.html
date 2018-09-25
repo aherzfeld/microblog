@@ -7,6 +7,7 @@
     <title>Welcome to Microblog</title>
     {% endif %}
   </head>
+
   <body>
     <div>
       Microblog:
@@ -17,6 +18,8 @@
       {% if current_user.is_anonymous %}
       <a href="{{ url_for('login') }}">Login</a>
       {% else %}
+      <!-- the url_for() here takes an argument for the dynamic URL -->
+      <a href="{{ url_for('user', username=current_user.username) }}">Profile</a>
       <a href="{{ url_for('logout') }}">Logout</a>
       {% endif %}
     </div>
@@ -32,4 +35,5 @@
     {% endwith %}
     {% block content %}{% endblock %}
   </body>
+
 </html>

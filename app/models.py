@@ -3,6 +3,7 @@ from datetime import datetime
 from app import db
 from flask_login import UserMixin  # generic implementations for the user model
 from app import login  # from flask-login to be used for user loader function
+from hashlib import md5  # this is used to hash emails for gravatars
 
 
 class User(UserMixin, db.Model):
@@ -14,12 +15,20 @@ class User(UserMixin, db.Model):
     # the first argument to db.relationship is the model class that represents the "many" side of the relationship - in this case 'Post'
     # the backref argument defines the name of a field that will be added to the objects of the "many" class that points back at the "one" object.
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    about_me = db.Column(db.String(140))
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    # logic to generate avatars - Part 6 - Flask Mega Tutorial
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
+            digest, size)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
