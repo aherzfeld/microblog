@@ -35,7 +35,18 @@ class EditProfileForm(FlaskForm):
     about_me = TextAreaField('About me', validators=[Length(min=0, max=140)])
     submit = SubmitField('Submit')
 
+    # this is an overloaded constructor that accepts the original username as an argument
+    # The username is saved as an instance variable
+    def __init__(self, original_username, *args, **kwargs):
+        super(EditProfileForm, self).__init__(*args, **kwargs)
+        self.original_username = original_username
 
+    def validate_username(self, username):
+        # if the form username is same as original, no reason to check database
+        if username.data != self.original_username:
+            user = User.query.filter_by(username=self.username.data).first()
+            if user is not None:
+                raise ValidationError('Username taken, Please choose another.')
 
 
 

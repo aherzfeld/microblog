@@ -39,10 +39,14 @@ if not app.debug:
         app.logger.addHandler(mail_handler)
     if not os.path.exists('logs'):
         os.mkdir('logs')
+    # rotates logs to new file once they reach 10KB - 10 files total
     file_handler = RotatingFileHandler('logs/microblog.log', maxBytes=10240,
                                        backupCount=10)
+    # provides custom formatting for log messages
     file_handler.setFormatter(logging.Formatter(
        '%(asctime)s %(levelname)s: %(messages)s [in %(pathname)s:%(lineno)d]'))
+    # Sets logging level to INFO
+    # categories in increasing severity: DEBUG, INFO, WARNING, ERROR, CRITICAL
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
 
