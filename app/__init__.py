@@ -44,7 +44,7 @@ if not app.debug:
                                        backupCount=10)
     # provides custom formatting for log messages
     file_handler.setFormatter(logging.Formatter(
-       '%(asctime)s %(levelname)s: %(messages)s [in %(pathname)s:%(lineno)d]'))
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
     # Sets logging level to INFO
     # categories in increasing severity: DEBUG, INFO, WARNING, ERROR, CRITICAL
     file_handler.setLevel(logging.INFO)
