@@ -15,6 +15,7 @@
         to generate the URL by mapping it to its view function-->
       <a href="{{ url_for('index') }}">Home</a>
       <!-- this conditional logic will change the login link to logout once a user is logged in, .is_anonymous is true for users who aren't logged in -->
+      <a href="{{ url_for('explore') }}">Explore</a>
       {% if current_user.is_anonymous %}
       <a href="{{ url_for('login') }}">Login</a>
       {% else %}
