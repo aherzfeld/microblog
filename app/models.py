@@ -1,12 +1,15 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from app import db
+from time import time  # used for password reset tokens
+from app import app, db
 from flask_login import UserMixin  # generic implementations for the user model
 from app import login  # from flask-login to be used for user loader function
 from hashlib import md5  # this is used to hash emails for gravatars
+import jwt  # JSON web tokens for password reset
 
 
-# This is an auxiliary table and has no data except foreign keys, and thus, it doesn't need an associated model class.
+""" This is an auxiliary table and has no data except foreign keys, and thus,
+it doesn't need an associated model class. """
 followers = db.Table('followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
@@ -18,9 +21,14 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    # this is not an actual database field, but a high-level view of the relationship between users and posts
-    # the first argument to db.relationship is the model class that represents the "many" side of the relationship - in this case 'Post'
-    # the backref argument defines the name of a field that will be added to the objects of the "many" class that points back at the "one" object.
+    """ this is not an actual database field, but a high-level view of
+    the relationship between users and posts
+
+    the first argument to db.relationship is the model class that
+    represents the "many" side of the relationship - in this case 'Post'
+
+    the backref argument defines the name of a field that will be added to
+    the objects of the "many" class that points back at the "one" object. """
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
@@ -63,6 +71,29 @@ class User(UserMixin, db.Model):
         own = Post.query.filter_by(user_id=self.id)
         # we union the followed posts and own before sorting
         return followed.union(own).order_by(Post.timestamp.desc())
+
+    '''
+    the jwt.encode() function returns the token as a byte sequence, but we
+    use decode(utf-8) here to return it as a string
+    '''
+
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+    '''
+    static methods can be invoked directly from the class and do not
+    receive the class as the first argument
+    '''
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)

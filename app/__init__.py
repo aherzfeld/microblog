@@ -3,6 +3,7 @@ from config import Config  # imports Config class from config.py
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_mail import Mail
 import logging  # python's logging package - can send logs by email
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
@@ -13,6 +14,7 @@ db = SQLAlchemy(app)  # instantiate db by passing the app to SQLAlchemy
 migrate = Migrate(app, db)  # also instantiate the database migration engine
 login = LoginManager(app)  # instantiates flask-login
 login.login_view = 'login'  # this tells flask-login which view function handles logins
+mail = Mail(app)  # create flask-mail instance
 
 # this app package is defined by the app directory and the __init__.py script
 # imported below app instantiation to avoid circular imports
