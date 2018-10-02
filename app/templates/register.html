@@ -1,21 +1,11 @@
 {% extends "base.html" %}
-<!-- import statement works similarly to python import, but for templates.
-     Adds a wtf.quick_form() macro that renders the complete form, including
-     support for validation errors, and with bootstrap styling -->
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-
-  <h1>Register</h1>
-  <div class="row">
-    <div class="col-md-4">
-      {{ wtf.quick_form(form) }}
+    <h1>{{ _('Register') }}</h1>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
     </div>
-  </div>
-  
 {% endblock %}
-
-
-
-
-

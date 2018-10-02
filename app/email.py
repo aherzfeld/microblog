@@ -1,7 +1,9 @@
+from threading import Thread  # for sending asynchronous emails
 from flask import render_template
 from flask_mail import Message
+from flask_babel import _  # function call to mark text for translation
 from app import app, mail
-from threading import Thread  # for sending asynchronous emails
+
 
 
 '''runs in a background thread, invoked via the Thread() class in the last
@@ -20,7 +22,8 @@ def send_email(subject, sender, recipients, text_body, html_body):
 
 def send_password_reset_email(user):
     token = user.get_reset_password_token()
-    send_email('[Microblog] Reset Your Password',
+    # email subject wrapped in babel text marking function
+    send_email(_('[Microblog] Reset Your Password'),
                sender=app.config['ADMINS'][0],
                recipients=[user.email],
                text_body=render_template('email/reset_password.txt',
