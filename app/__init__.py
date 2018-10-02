@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_bootstrap import Bootstrap
+from flask_moment import Moment
 import logging  # python's logging package - can send logs by email
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
@@ -18,6 +19,7 @@ login = LoginManager(app)  # instantiates flask-login
 login.login_view = 'login'
 mail = Mail(app)  # create flask-mail instance
 bootstrap = Bootstrap(app)
+moment = Moment(app)
 
 # this app package is defined by the app directory and the __init__.py script
 # imported below app instantiation to avoid circular imports
