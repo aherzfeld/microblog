@@ -17,7 +17,7 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
-    # get_locale() from flask-babel returns the selected language and locale for a given request. We're adding it to the g object, so we can access it from the base template
+    '''get_locale() from flask-babel returns the selected language and locale for a given request. We're adding it to the g object, so we can access it from the base template. This function returns a locale object, but we just want the language code, which can be obtained by converting the object to a string.'''
     g.locale = str(get_locale())
 
 

@@ -1,4 +1,4 @@
-from app import app, db # imports the app variable that is a member of the app package
+from app import app, db, cli # imports the app variable that is a member of the app package
 from app.models import User, Post
 
 
