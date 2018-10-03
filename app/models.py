@@ -108,6 +108,7 @@ class Post(db.Model):
     # initialized as a foreign key which references an id value from the user table
     # 'user.id' is the database table name - that's why its lowercase
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    language = db.Column(db.String(5))
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)

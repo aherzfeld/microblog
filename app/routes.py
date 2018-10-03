@@ -1,5 +1,6 @@
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, g
+from flask import render_template, flash, redirect, url_for, request, g, \
+    jsonify
 # used to redirect user to initial protected page after login
 from werkzeug.urls import url_parse
 from flask_babel import _, get_locale  # Flask Mega: part 13 I18n & L10n
@@ -9,6 +10,8 @@ from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, \
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User, Post
 from app.email import send_password_reset_email
+from app.translate import translate
+from guess_language import guess_language
 
 
 # this builtin flask decorator causes this function to execute before any view function
@@ -28,7 +31,12 @@ def before_request():
 def index():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
+        # language detection with guess_language
+        language = guess_language(form.post.data)
+        if language == 'UNKNOWN' or len(language) > 5:
+            language = ''
+        post = Post(body=form.post.data, author=current_user,
+                    language=language)
         db.session.add(post)
         db.session.commit()
         flash(_('Your post is now live!'))
@@ -203,7 +211,12 @@ def unfollow(username):
     return redirect(url_for('user', username=username))
 
 
-
+@app.route('/translate', methods=['POST'])
+@login_required
+def translate_text():
+    return jsonify({'text': translate(request.form['text'],
+                                      request.form['source_language'],
+                                      request.form['dest_language'])})
 
 
 
