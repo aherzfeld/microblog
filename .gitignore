@@ -2,5 +2,8 @@ venv/
 
 config.py
 
-__pycache__/
-app/__pycache__/
+__pycache__
+app/__pycache__
+
+# temp file for translations - babel
+messages.pot
