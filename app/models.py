@@ -1,11 +1,11 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from time import time  # used for password reset tokens
-from app import app, db
-from flask_login import UserMixin  # generic implementations for the user model
-from app import login  # from flask-login to be used for user loader function
 from hashlib import md5  # this is used to hash emails for gravatars
+from time import time  # used for password reset tokens
 import jwt  # JSON web tokens for password reset
+from flask import current_app
+from flask_login import UserMixin  # generic implementations for the user model
+from app import db, login  # from flask-login for user loader function
 
 
 """ This is an auxiliary table and has no data except foreign keys, and thus,
@@ -80,7 +80,8 @@ class User(UserMixin, db.Model):
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
-            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+            current_app.config['SECRET_KEY'],
+            algorithm='HS256').decode('utf-8')
 
     '''
     static methods can be invoked directly from the class and do not
@@ -89,7 +90,7 @@ class User(UserMixin, db.Model):
     @staticmethod
     def verify_reset_password_token(token):
         try:
-            id = jwt.decode(token, app.config['SECRET_KEY'],
+            id = jwt.decode(token, current_app.config['SECRET_KEY'],
                             algorithms=['HS256'])['reset_password']
         except:
             return
@@ -97,6 +98,13 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
+
+
+# user loader function to help flask-login load a user from the db
+# flask-login passes the id as a string so it needs to be converted for the db
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 
 class Post(db.Model):
@@ -112,10 +120,3 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
-
-
-# user loader function to help flask-login load a user from the db
-# flask-login passes the id as a string so it needs to be converted for the db
-@login.user_loader
-def load_user(id):
-    return User.query.get(int(id))

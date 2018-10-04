@@ -1,9 +1,13 @@
-venv/
+venv
+.env
+.flaskenv
+app.db
+microblog.log*
+
+__pycache__
 
 config.py
 
-__pycache__
-app/__pycache__
-
-# temp file for translations - babel
+# translations
 messages.pot
+*.mo
