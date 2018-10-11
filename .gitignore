@@ -11,3 +11,6 @@ config.py
 # translations
 messages.pot
 *.mo
+
+# installer logs
+pip-log.txt
