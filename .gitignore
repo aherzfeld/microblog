@@ -6,8 +6,6 @@ microblog.log*
 
 __pycache__
 
-config.py
-
 # translations
 messages.pot
 *.mo
